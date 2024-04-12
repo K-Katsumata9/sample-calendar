@@ -31,3 +31,7 @@ backend/tmp/storage/*
 
 # Ignore master key for decrypting credentials and more.
 backend/config/master.key
+
+backend/.ruby-version
+
+frontend/test.txt
