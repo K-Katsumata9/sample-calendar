@@ -8,6 +8,6 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-10.times do |n|
-    Event.create!(name: "予定#{n+1}", start: Time.now, end: Time.now + 1.hour)
+5.times do |n|
+    Event.create!(title: "予定#{n+1}", start: Time.now, end: Time.now + 1.hour)
 end
