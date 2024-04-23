@@ -9,5 +9,5 @@
 #   end
 
 5.times do |n|
-    Event.create!(title: "予定#{n+1}", start: Time.now, end: Time.now + 1.hour)
+    Event.create!(name: "予定#{n+1}", start: Time.now, end: Time.now + 1.hour)
 end
