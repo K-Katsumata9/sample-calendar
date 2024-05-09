@@ -26,13 +26,21 @@
           :month-format="timestamp => new Date(timestamp.date).getMonth() + 1 + ' /'"
           @click:event="showEvent"
           @click:day="initEvent"
+          @click:date="showDayEvents"
+          @click:more="showDayEvents"
         ></v-calendar>
       </v-sheet>
     </v-sheet>
+
     <v-dialog :value="event !== null" @click:outside="closeDialog" width="600">
       <EventDetailDialog v-if="event !== null && !isEditMode" />
       <EventFormDialog v-if="event !== null && isEditMode" />
     </v-dialog>
+
+    <v-dialog :value="clickedDate !== null" @click:outside="closeDialog" width="600">
+      <DayEventList />
+    </v-dialog>
+
   </div>
 </template>
 
@@ -42,6 +50,7 @@ import { mapActions, mapGetters } from "vuex";
 import { format } from 'date-fns';
 import EventDetailDialog from '../events/EventDetailDialog';
 import EventFormDialog from '../events/EventFormDialog';
+import DayEventList from '../events/DayEventList';
 import CalendarList from '../calendars/CalendarList';
 import { getDefaultStartAndEnd } from '../../functions/datetime';
 
@@ -51,19 +60,19 @@ export default {
     EventDetailDialog,
     EventFormDialog,
     CalendarList,
+    DayEventList,
   },
   data: () => ({
     value: format(new Date(), 'yyyy/MM/dd'),
   }),
   computed: {
-    ...mapGetters('events', ['events', 'event', 'isEditMode']),
-    
+    ...mapGetters('events', ['events', 'event', 'isEditMode', 'clickedDate']),
     title () {
       return format(new Date(this.value), 'yyyy年 M月');
     }
   },
   methods: {
-    ...mapActions('events', ['fetchEvents', 'setEvent', 'setEditMode']),
+    ...mapActions('events', ['fetchEvents', 'setEvent', 'setEditMode', 'setClickedDate']),
     setToday() {
       this.value = format(new Date(), 'yyyy/MM/dd')
     },
@@ -74,12 +83,20 @@ export default {
     closeDialog() {
       this.setEvent(null);
       this.setEditMode(false);
+      this.setClickedDate(null);
     },
     initEvent({ date }) {
+      if (this.clickedDate !== null) {
+        return;
+      }
       date = date.replace(/-/g, '/');
       const [start, end] = getDefaultStartAndEnd(date);
       this.setEvent({ name: '', start: start, end: end, timed: true });
       this.setEditMode(true);
+    },
+    showDayEvents({ date }) {
+      date = date.replace(/-/g, '/');
+      this.setClickedDate(date);
     },
   },
 };
